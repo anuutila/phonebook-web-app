@@ -1,8 +1,10 @@
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
+const cors = require('cors')
 
 app.use(bodyParser.json())
+app.use(cors())
 
 let persons = [
   {
@@ -73,6 +75,12 @@ app.post('/api/persons', (request, response) => {
 
   response.json(person)
 })
+
+const error = (request, response) => {
+  response.status(404).send({error: 'unknown endpoint'})
+}
+
+app.use(error)
 
 const port = 3001
 app.listen(port)
