@@ -54,8 +54,20 @@ const genereteId = () => {
 }
 
 app.post('/api/persons', (request, response) => {
-  const person = request.body
-  person.id = genereteId()
+  const body = request.body
+  
+  if (body.name === undefined || body.number === undefined) {
+    return response.status(400).json({error: 'nimi tai numero puuttuu'})
+  }
+  if (persons.filter(person => person.name === body.name).length > 0) {
+    return response.status(400).json({error: 'nimi on jo luettelossa'})
+  }
+
+  const person ={
+    name: body.name,
+    number: body.number,
+    id: genereteId()
+  }
 
   persons = persons.concat(person)
 
