@@ -8,6 +8,16 @@ app.use(bodyParser.json())
 app.use(cors())
 app.use(express.static('build'))
 
+const logger = (request, response, next) => {
+  console.log('Method:', request.method)
+  console.log('Path:  ', request.path)
+  console.log('Body:  ', request.body)
+  console.log('---')
+  next()
+}
+
+app.use(logger)
+
 const formatPerson = (person) => {
   return {
     name: person.name,
@@ -22,28 +32,45 @@ app.get('/api/persons', (request, response) => {
     .then(persons => {
       response.json(persons.map(formatPerson))
     })
+    .catch(error => {
+      console.log(error)
+    })
 })
 
 app.get('/api/persons/:id', (request, response) => {
   Person
     .findById(request.params.id)
     .then(person => {
-      response.json(formatPerson(person))
+      if (person) {
+        response.json(formatPerson(person))
+      } else {
+        response.status(404).end()
+      } 
+    })
+    .catch(error => {
+      console.log(error)
+      response.status(400).send({ error: 'malformatted id' })
     })
 })
 
-// app.delete('/api/persons/:id', (request, response) => {
-  // const id = Number(request.params.id)
-  // persons = persons.filter(person => person.id !== id)
-
-  // response.status(204).end()
-// })
+app.delete('/api/persons/:id', (request, response) => {
+  Person
+    .findByIdAndRemove(request.params.id)
+    .then(result => {
+      response.status(204).end()
+    })
+    .catch(error => {
+      console.log(error)
+      response.status(400).send({ error: 'malformatted id' })
+    })
+})
 
 
 app.post('/api/persons', (request, response) => {
   const body = request.body
 
   if (!body.name || !body.number) {
+    window.alert('sdfgsdg')
     return response.status(400).send({error: 'nimi tai numero puuttuu'})
   }
 
@@ -54,8 +81,12 @@ app.post('/api/persons', (request, response) => {
 
   person
     .save()
-    .then(savedPerson => {
-      response.json(formatPerson(savedPerson))
+    .then(formatPerson)
+    .then(savedAndFormattedPerson => {
+      response.json(savedAndFormattedPerson)
+    })
+    .catch(error => {
+      console.log(error)
     })
 })
 
