@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const url = 'mongodb+srv://anuutila:*****@cluster0.ixlyb.mongodb.net/phonebook-persons'
+const url = 'mongodb+srv://anuutila:3wFsKmyFU9cl9Acv@cluster0.ixlyb.mongodb.net/phonebook-persons'
 
 mongoose.connect(url)
 
@@ -27,14 +27,14 @@ if (process.argv.length === 4) {
 } else if (process.argv.length === 2) {
 
   Person
-  .find({})
-  .then(result => {
-    console.log('puhelinluettelo:')
-    result.forEach(person => {
-      console.log(person.name, person.number)
+    .find({})
+    .then(result => {
+      console.log('puhelinluettelo:')
+      result.forEach(person => {
+        console.log(person.name, person.number)
+      })
+      mongoose.connection.close()
     })
-    mongoose.connection.close()
-  })
 
 } else {
   console.log('Virhe! Tuntematon komento')
