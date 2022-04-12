@@ -1,6 +1,10 @@
 const mongoose = require('mongoose')
 
-const url = 'mongodb+srv://anuutila:3wFsKmyFU9cl9Acv@cluster0.ixlyb.mongodb.net/phonebook-persons'
+if ( process.env.NODE_ENV !== 'production' ) {
+  require('dotenv').config()
+}
+
+const url = process.env.MONGO_URI
 
 mongoose.connect(url)
 
